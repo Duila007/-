@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的导航</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#fff; --text:#1c2230; --sub:#697386; --line:#e6e9f0;
+    --brand:#2563eb; --brand2:#1d4ed8; --danger:#dc2626;
+    --shadow:0 1px 2px rgba(23,32,56,.06), 0 6px 20px rgba(23,32,56,.07);
+  }
+  [hidden]{display:none!important}
+  *{box-sizing:border-box}
+  body{
+    margin:0;min-height:100vh;color:var(--text);
+    font:16px/1.5 system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:
+      radial-gradient(1100px 520px at 12% -12%, #e6efff 0, rgba(230,239,255,0) 62%),
+      radial-gradient(900px 460px at 100% 0, #eef7f0 0, rgba(238,247,240,0) 55%),
+      var(--bg);
+  }
+  header{
+    position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;gap:10px;
+    align-items:center;justify-content:space-between;padding:12px 20px;
+    background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .brand .logo{font-size:22px}
+  h1{font-size:19px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #titleInput{font:700 19px/1.4 inherit;border:1px solid var(--line);border-radius:9px;padding:4px 9px;background:#fff;min-width:200px}
+  #titleInput:focus{outline:none;border-color:#a9c0f5;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+  .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .btn{
+    font:inherit;font-size:14px;padding:7px 14px;border-radius:999px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;color:var(--text);
+    transition:border-color .15s, box-shadow .15s, background .15s;white-space:nowrap;
+  }
+  .btn:hover{border-color:#c9d2e3;box-shadow:var(--shadow)}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .btn.primary:hover{background:var(--brand2);border-color:var(--brand2)}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .chip{font-size:13px;color:#3b4a6b;background:#eef2ff;border:1px solid #dfe6ff;padding:5px 11px;border-radius:999px}
+  main{padding:24px 20px 64px;max-width:1180px;margin:0 auto}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+  a.card{
+    display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px;text-decoration:none;color:inherit;box-shadow:var(--shadow);
+    transition:transform .15s, box-shadow .15s;
+  }
+  a.card:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(23,32,56,.13)}
+  .card .top{display:flex;align-items:center;gap:10px}
+  .card .ico{font-size:20px;width:34px;height:34px;flex:none;display:grid;place-items:center;background:#f1f5ff;border-radius:10px}
+  .card .name{font-weight:600;font-size:16px;overflow-wrap:anywhere}
+  .card .desc{color:var(--sub);font-size:13px;margin-top:6px;overflow-wrap:anywhere}
+  .card .host{color:#9aa4b8;font-size:12px;margin-top:9px;overflow-wrap:anywhere}
+  .card.edit{display:flex;flex-direction:column;gap:8px}
+  .in{font:inherit;font-size:14px;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fbfcfe}
+  .in:focus{outline:none;border-color:#a9c0f5;background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+  .card.edit .row{display:flex;gap:8px}
+  .card.edit .row.end{justify-content:flex-end}
+  .in-ico{width:56px;flex:none;text-align:center}
+  .iconbtn{font:inherit;font-size:14px;height:32px;min-width:34px;padding:0 8px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer}
+  .iconbtn:hover{border-color:#c9d2e3}
+  .iconbtn.del{color:var(--danger);border-color:#f3c9c9;padding:0 12px}
+  .empty{color:var(--sub);text-align:center;padding:40px 0}
+  .overlay{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:rgba(18,24,38,.45)}
+  .dialog{width:100%;max-width:540px;background:#fff;border-radius:16px;padding:22px;box-shadow:0 24px 60px rgba(15,23,42,.28)}
+  .dialog h2{margin:0 0 8px;font-size:18px}
+  .hint{color:var(--sub);font-size:13px;margin:0 0 12px}
+  .hint.small{font-size:12px;margin:12px 0 0}
+  .hint a{color:var(--brand)}
+  .dialog input[type=password]{width:100%;font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fbfcfe}
+  .dialog input[type=password]:focus{outline:none;border-color:#a9c0f5;background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+  .check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--sub);margin:12px 0 0}
+  .actions-end{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+  .err{color:var(--danger);font-size:13px;margin:10px 0 0}
+  .toast{
+    position:fixed;left:50%;bottom:26px;z-index:60;max-width:90vw;text-align:center;
+    transform:translate(-50%,20px);opacity:0;pointer-events:none;
+    background:#1f2937;color:#fff;padding:11px 16px;border-radius:10px;font-size:14px;
+    transition:opacity .25s, transform .25s;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast.err{background:#b91c1c}
+  @media (max-width:560px){
+    h1{font-size:17px}
+    .btn{padding:6px 11px;font-size:13px}
+    #titleInput{min-width:150px;font-size:16px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><span class="logo">🧭</span><span id="brandTitle"></span></div>
+  <div class="actions" id="headerActions"></div>
+</header>
+
+<main>
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden>还没有任何链接。登录后点「＋ 添加链接」开始添加。</p>
+</main>
+
+<div class="overlay" id="modal" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+    <h2 id="dlgTitle">登录以编辑导航</h2>
+    <p class="hint">粘贴你的 GitHub 个人令牌（PAT）。只有对该仓库有写入权限的账号才能登录成功；令牌只保存在本机浏览器，不会发给任何第三方。</p>
+    <input id="tokenInput" type="password" placeholder="ghp_… 或 github_pat_…" autocomplete="off" spellcheck="false">
+    <label class="check"><input type="checkbox" id="rememberChk"> 记住令牌（下次打开免登录，仅本机）</label>
+    <p class="hint small">还没有令牌？到 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub → Settings → Developer settings → Personal access tokens</a> 新建一个，勾选 <code>repo</code> 权限。</p>
+    <p class="err" id="loginErr" hidden></p>
+    <div class="actions-end">
+      <button class="btn" id="cancelLogin">取消</button>
+      <button class="btn primary" id="doLogin">登录</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   我的导航 · 单文件导航页
+   · 未登录：只展示导航卡片（所有人可见）
+   · 登录：粘贴 GitHub 令牌（PAT，需 repo 权限），即可增删改链接
+   · 保存：把数据写入本仓库的 nav/nav.json，GitHub 自动提交并发布
+   部署位置：仓库根目录下的 nav/ 文件夹。页面若换位置，请同步修改 CONFIG
+   ============================================================ */
+
+const CONFIG = {
+  owner: 'Duila007',
+  repo: '-',
+  branch: 'main',
+  dataPath: 'nav/nav.json'          // nav.json 在仓库中的路径
+};
+
+/* 默认导航（第一次打开、或 nav.json 还没生成时显示的内容） */
+const DEFAULT_NAV = {
+  title: '我的导航',
+  links: [
+    { icon: '📄', name: '免费公益站统计合集', url: 'https://vcnzf1j2lbd8.feishu.cn/wiki/OY8fwp7C5ihpJ2kez8Mc2cKUncf', desc: '飞书文档 · 持续更新' },
+    { icon: '📝', name: '我的飞书文档', url: 'https://vcnzf1j2lbd8.feishu.cn/docx/JiIed93OMoN8XKxPx1wcxG4nn7c', desc: '飞书文档' }
+  ]
+};
+
+const CACHE_KEY = 'nav_cache_v1';
+const TOKEN_KEY = 'nav_token_v1';
+
+let navData = null;       // { title, links:[{icon,name,url,desc}] }
+let editing = false;      // 是否处于编辑模式
+let saving = false;
+let currentUser = null;   // 已登录的 GitHub 账号
+let currentToken = null;
+
+/* ---------------- 小工具 ---------------- */
+const $ = (s, r) => (r || document).querySelector(s);
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => (
+    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+  ));
+}
+function toast(msg, kind, ms){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (kind ? ' ' + kind : '');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { t.className = 'toast'; }, ms || 3200);
+}
+function b64encodeUtf8(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin);
+}
+function normalizeUrl(u){
+  u = String(u || '').trim();
+  if (!u) return '';
+  if (!/^https?:\/\//i.test(u)) u = 'https://' + u.replace(/^\/+/, '');
+  return u;
+}
+function hostOf(u){
+  try { return new URL(u).hostname; } catch (e) { return ''; }
+}
+
+/* ---------------- 数据 ---------------- */
+function normalizeData(d){
+  if (!d || typeof d !== 'object' || !Array.isArray(d.links)) return null;
+  const links = d.links
+    .filter(x => x && (x.url || x.name))
+    .map(x => ({
+      icon: String((x && x.icon) || ''),
+      name: String((x && x.name) || ''),
+      url: normalizeUrl(x && x.url),
+      desc: String((x && x.desc) || '')
+    }));
+  return { title: String(d.title || '我的导航'), links };
+}
+function cacheGet(){
+  try { const raw = localStorage.getItem(CACHE_KEY); return raw ? JSON.parse(raw) : null; }
+  catch (e) { return null; }
+}
+function cacheSet(d){
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch (e) {}
+}
+async function loadPublished(){
+  try {
+    const res = await fetch('./nav.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) return null;
+    return normalizeData(await res.json());
+  } catch (e) { return null; }
+}
+
+/* ---------------- GitHub API ---------------- */
+async function gh(path, opts){
+  opts = opts || {};
+  const res = await fetch('https://api.github.com' + path, {
+    method: opts.method || 'GET',
+    headers: Object.assign({
+      'Authorization': 'Bearer ' + currentToken,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    }, opts.headers || {}),
+    body: opts.body
+  });
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  return { ok: res.ok, status: res.status, data: data };
+}
+
+async function verifyToken(token){
+  currentToken = token;
+  const me = await gh('/user');
+  if (!me.ok){
+    currentToken = null;
+    return { ok: false, error: me.status === 401 ? '令牌无效或已过期' : ('GitHub 接口返回 HTTP ' + me.status) };
+  }
+  const perm = await gh('/repos/' + CONFIG.owner + '/' + CONFIG.repo);
+  if (!perm.ok){
+    currentToken = null;
+    return { ok: false, error: '无法读取仓库 ' + CONFIG.owner + '/' + CONFIG.repo + '（HTTP ' + perm.status + '），请确认令牌有 repo 权限' };
+  }
+  const canPush = !!(perm.data && perm.data.permissions && perm.data.permissions.push);
+  if (!canPush){
+    currentToken = null;
+    return { ok: false, error: '账号 ' + me.data.login + ' 没有该仓库的编辑权限' };
+  }
+  return { ok: true, login: me.data.login };
+}
+
+async function doLogin(token, remember){
+  token = String(token || '').trim();
+  if (!token) return { ok: false, error: '请输入令牌' };
+  const r = await verifyToken(token);
+  if (!r.ok) return r;
+  currentUser = r.login;
+  setStoredToken(token, remember);
+  editing = true;
+  render();
+  toast('已登录：' + currentUser + '，现在可以编辑导航');
+  return r;
+}
+
+/* ---------------- 登录态存取 ---------------- */
+function getStoredToken(){
+  return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY) || '';
+}
+function setStoredToken(tk, remember){
+  if (remember){ localStorage.setItem(TOKEN_KEY, tk); sessionStorage.removeItem(TOKEN_KEY); }
+  else { sessionStorage.setItem(TOKEN_KEY, tk); localStorage.removeItem(TOKEN_KEY); }
+}
+function clearStoredToken(){
+  localStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+}
+async function restoreSession(){
+  const tk = getStoredToken();
+  if (!tk) return;
+  const r = await verifyToken(tk);
+  if (r.ok){
+    currentUser = r.login;
+    render();   // 保持"看"的状态，头部会出现「编辑」按钮
+  } else {
+    clearStoredToken();
+    currentToken = null;
+    render();
+  }
+}
+function logout(){
+  clearStoredToken();
+  currentToken = null; currentUser = null; editing = false;
+  render();
+  toast('已退出登录');
+}
+
+/* ---------------- 渲染 ---------------- */
+function cardViewHTML(l){
+  const host = hostOf(l.url);
+  return '<a class="card" href="' + esc(l.url) + '" target="_blank" rel="noopener">' +
+      '<div class="top"><span class="ico">' + esc(l.icon || '🔗') + '</span>' +
+      '<span class="name">' + esc(l.name || l.url) + '</span></div>' +
+      (l.desc ? '<div class="desc">' + esc(l.desc) + '</div>' : '') +
+      (host ? '<div class="host">' + esc(host) + '</div>' : '') +
+    '</a>';
+}
+function cardEditHTML(l, i){
+  return '<div class="card edit" data-idx="' + i + '">' +
+      '<div class="row">' +
+        '<input class="in in-ico" value="' + esc(l.icon) + '" placeholder="图标" maxlength="4">' +
+        '<input class="in in-name" value="' + esc(l.name) + '" placeholder="名称">' +
+      '</div>' +
+      '<input class="in in-url" value="' + esc(l.url) + '" placeholder="https://链接地址" spellcheck="false">' +
+      '<input class="in in-desc" value="' + esc(l.desc) + '" placeholder="备注（可选）">' +
+      '<div class="row end">' +
+        '<button class="iconbtn" data-act="up" title="上移">↑</button>' +
+        '<button class="iconbtn" data-act="down" title="下移">↓</button>' +
+        '<button class="iconbtn del" data-act="del">删除</button>' +
+      '</div>' +
+    '</div>';
+}
+function render(){
+  document.title = navData.title || '我的导航';
+
+  const act = $('#headerActions');
+  if (!currentUser){
+    act.innerHTML = '<button class="btn primary" id="btnLogin">登录</button>';
+  } else if (!editing){
+    act.innerHTML =
+      '<span class="chip">已登录：' + esc(currentUser) + '</span>' +
+      '<button class="btn" id="btnEdit">编辑</button>' +
+      '<button class="btn" id="btnLogout">退出登录</button>';
+  } else {
+    act.innerHTML =
+      '<button class="btn" id="btnAdd">＋ 添加链接</button>' +
+      '<button class="btn primary" id="btnSave"' + (saving ? ' disabled' : '') + '>' + (saving ? '保存中…' : '保存') + '</button>' +
+      '<button class="btn" id="btnDone">完成</button>' +
+      '<button class="btn" id="btnLogout">退出登录</button>';
+  }
+
+  const brand = $('#brandTitle');
+  if (editing){
+    brand.innerHTML = '<input id="titleInput" value="' + esc(navData.title) + '" placeholder="导航标题">';
+  } else {
+    brand.innerHTML = '<h1>' + esc(navData.title) + '</h1>';
+  }
+
+  const grid = $('#grid');
+  grid.innerHTML = editing
+    ? navData.links.map(cardEditHTML).join('')
+    : navData.links.map(cardViewHTML).join('');
+  $('#empty').hidden = navData.links.length > 0;
+}
+
+function syncFromDOM(){
+  if (!editing) return;
+  const t = $('#titleInput');
+  if (t) navData.title = t.value.trim() || '我的导航';
+  const links = [];
+  document.querySelectorAll('#grid .card.edit').forEach(c => {
+    links.push({
+      icon: $('.in-ico', c).value.trim(),
+      name: $('.in-name', c).value.trim(),
+      url: $('.in-url', c).value.trim(),
+      desc: $('.in-desc', c).value.trim()
+    });
+  });
+  navData.links = links;
+}
+function focusLast(){
+  const cards = document.querySelectorAll('#grid .card.edit');
+  const last = cards[cards.length - 1];
+  if (last){
+    syncFromDOM();   // 先把已填内容读回内存，避免刚输入的丢失
+    const inp = $('.in-name', last);
+    if (inp) inp.focus();
+  }
+}
+function move(idx, d){
+  syncFromDOM();
+  const j = idx + d;
+  if (j < 0 || j >= navData.links.length) return;
+  const tmp = navData.links[idx];
+  navData.links[idx] = navData.links[j];
+  navData.links[j] = tmp;
+  render();
+}
+function removeAt(idx){
+  syncFromDOM();
+  navData.links.splice(idx, 1);
+  render();
+}
+
+/* ---------------- 保存到 GitHub ---------------- */
+async function save(){
+  if (!currentToken) { toast('请先登录', 'err'); return; }
+  syncFromDOM();
+
+  const clean = { title: navData.title || '我的导航', links: [] };
+  for (const l of navData.links){
+    if (!l.name && !l.url) continue;                 // 全空行忽略
+    if (!l.url) {                                     // 有名字没网址 → 报错中止
+      toast('「' + l.name + '」还缺少网址', 'err', 5000);
+      return;
+    }
+    const url = normalizeUrl(l.url);
+    clean.links.push({ icon: l.icon, name: l.name || hostOf(url) || url, url: url, desc: l.desc });
+  }
+
+  saving = true; render();
+  try {
+    const api = '/repos/' + CONFIG.owner + '/' + CONFIG.repo + '/contents/' + CONFIG.dataPath;
+    let sha = null;
+    const cur = await gh(api + '?ref=' + encodeURIComponent(CONFIG.branch));
+    if (cur.ok) sha = cur.data && cur.data.sha;
+    else if (cur.status !== 404) throw new Error('读取数据文件失败（HTTP ' + cur.status + '）');
+
+    const body = {
+      message: '更新导航链接（网页编辑）',
+      content: b64encodeUtf8(JSON.stringify(clean, null, 2)),
+      branch: CONFIG.branch
+    };
+    if (sha) body.sha = sha;
+
+    const put = await gh(api, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!put.ok) throw new Error((put.data && put.data.message) || ('HTTP ' + put.status));
+
+    navData = clean;
+    cacheSet(navData);
+    toast('已保存到 GitHub，约 1 分钟后所有访客都能看到');
+  } catch (err){
+    toast('保存失败：' + err.message, 'err', 6000);
+  } finally {
+    saving = false; render();
+  }
+}
+
+/* ---------------- 登录弹窗 ---------------- */
+function openLogin(){
+  $('#modal').hidden = false;
+  $('#loginErr').hidden = true;
+  $('#tokenInput').value = '';
+  setTimeout(() => $('#tokenInput').focus(), 30);
+}
+function closeLogin(){ $('#modal').hidden = true; }
+async function submitLogin(){
+  const tk = $('#tokenInput').value.trim();
+  const remember = $('#rememberChk').checked;
+  const btn = $('#doLogin');
+  btn.disabled = true; btn.textContent = '验证中…';
+  const r = await doLogin(tk, remember);
+  btn.disabled = false; btn.textContent = '登录';
+  if (!r.ok){
+    const el = $('#loginErr');
+    el.textContent = r.error; el.hidden = false;
+    return;
+  }
+  closeLogin();
+}
+
+/* ---------------- 事件 ---------------- */
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  if (btn.id === 'btnLogin')  { openLogin(); return; }
+  if (btn.id === 'btnEdit')   { editing = true; render(); return; }
+  if (btn.id === 'btnAdd')    { syncFromDOM(); navData.links.push({ icon: '🔗', name: '', url: '', desc: '' }); render(); focusLast(); return; }
+  if (btn.id === 'btnSave')   { save(); return; }
+  if (btn.id === 'btnDone')   { syncFromDOM(); editing = false; render(); return; }
+  if (btn.id === 'btnLogout') { logout(); return; }
+  if (btn.id === 'cancelLogin'){ closeLogin(); return; }
+  if (btn.id === 'doLogin')   { submitLogin(); return; }
+});
+
+$('#grid').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-act]');
+  if (!btn || !editing) return;
+  const card = btn.closest('.card');
+  const idx = Number(card && card.dataset.idx);
+  if (isNaN(idx)) return;
+  if (btn.dataset.act === 'up') move(idx, -1);
+  else if (btn.dataset.act === 'down') move(idx, 1);
+  else if (btn.dataset.act === 'del') removeAt(idx);
+});
+
+$('#modal').addEventListener('click', (e) => { if (e.target === $('#modal')) closeLogin(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !$('#modal').hidden) closeLogin();
+  if (e.key === 'Enter' && e.target && e.target.id === 'tokenInput') submitLogin();
+});
+
+/* ---------------- 启动 ---------------- */
+async function init(){
+  const published = await loadPublished();
+  navData = normalizeData(published) || normalizeData(cacheGet()) || normalizeData(DEFAULT_NAV)
+         || { title: '我的导航', links: [] };
+  cacheSet(navData);
+  render();
+  await restoreSession();   // 有记住的令牌就静默恢复登录态
+}
+init();
+</script>
+</body>
+</html>
