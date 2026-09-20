@@ -16,60 +16,61 @@
 <style>
   /* ============ 主题变量 ============ */
   :root{
-    --bg:#f6f6f7; --surface:#ffffff; --surface-2:#efeff1; --line:#e4e4e7; --line-strong:#cfcfd6;
-    --text:#1b1b1d; --sub:#6b6b73; --faint:#76767f;
+    --bg:#f6f6f7; --surface:#ffffff; --surface-2:#f2f2f4; --line:#e4e4e7; --line-strong:#cfcfd6;
+    --text:#1b1b1d; --sub:#66666e; --faint:#6e6e76;
     --brand:#c04848; --brand-h:#a83c3c; --brand-soft:rgba(192,72,72,.10); --brand-line:rgba(192,72,72,.30);
     --icon-bg:rgba(192,72,72,.10);
-    --ok:#1f7a3d;
-    --shadow:0 1px 2px rgba(24,24,28,.06), 0 6px 20px rgba(24,24,28,.08);
-    --shadow-hover:0 10px 28px rgba(24,24,28,.15);
+    --shadow:0 1px 2px rgba(24,24,28,.05), 0 6px 18px rgba(24,24,28,.07);
+    --shadow-hover:0 10px 28px rgba(24,24,28,.14);
     --overlay:rgba(20,20,24,.45);
     --toast-bg:#232326; --toast-fg:#f2f2f4;
     --toast-err-bg:#8f2020; --toast-err-fg:#ffeded;
+    --pad-x:20px; --gap:14px;
   }
   :root[data-theme="dark"]{
     color-scheme: dark;
-    --bg:#1c1c1c; --surface:#2a2a2a; --surface-2:#232323; --line:#383838; --line-strong:#4d4d4d;
-    --text:#e8e8e8; --sub:#a0a0a0; --faint:#909090;
-    --brand:#c04848; --brand-h:#d05050; --brand-soft:rgba(208,80,80,.14); --brand-line:rgba(208,80,80,.34);
-    --icon-bg:rgba(208,80,80,.13);
-    --ok:#5fbf7f;
-    --shadow:0 1px 2px rgba(0,0,0,.35), 0 6px 20px rgba(0,0,0,.28);
-    --shadow-hover:0 12px 32px rgba(0,0,0,.45);
-    --overlay:rgba(0,0,0,.6);
-    --toast-bg:#3a3a3a; --toast-fg:#f0f0f0;
+    --bg:#1e1e1e; --surface:#2a2a2a; --surface-2:#252525; --line:#353535; --line-strong:#4a4a4a;
+    --text:#e8e8e8; --sub:#b4b4b4; --faint:#a6a6a6;
+    --brand:#c04848; --brand-h:#d05c58; --brand-soft:rgba(208,92,88,.14); --brand-line:rgba(208,92,88,.34);
+    --icon-bg:rgba(208,92,88,.13);
+    --shadow:0 1px 2px rgba(0,0,0,.38), 0 6px 18px rgba(0,0,0,.26);
+    --shadow-hover:0 12px 30px rgba(0,0,0,.45);
+    --overlay:rgba(0,0,0,.62);
+    --toast-bg:#3a3a3a; --toast-fg:#f2f2f2;
     --toast-err-bg:#7f2222; --toast-err-fg:#ffe9e9;
   }
 
   /* ============ 基础 ============ */
   [hidden]{display:none!important}
   *{box-sizing:border-box}
-  html,body{height:100%}
   body{
     margin:0;min-height:100vh;color:var(--text);background:var(--bg);
     font:16px/1.5 system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    display:flex;flex-direction:column;
     transition:background-color .25s, color .25s;
   }
   :root[data-theme="dark"] body{
     background:
-      radial-gradient(1100px 560px at 14% -12%, rgba(208,80,80,.055), transparent 62%),
-      radial-gradient(900px 480px at 100% 0, rgba(208,80,80,.035), transparent 58%),
+      radial-gradient(1100px 560px at 14% -12%, rgba(208,92,88,.05), transparent 62%),
+      radial-gradient(900px 480px at 100% 0, rgba(208,92,88,.032), transparent 58%),
       var(--bg);
   }
   :root[data-theme="dark"] ::-webkit-scrollbar{width:10px;height:10px}
-  :root[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#404040;border-radius:8px}
+  :root[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#3f3f3f;border-radius:8px}
   :root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover{background:#4d4d4d}
   :root[data-theme="dark"] ::-webkit-scrollbar-track{background:transparent}
 
+  /* 统一内容轴：页眉与正文同轴对齐 */
+  .wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 var(--pad-x)}
+
   /* ============ 顶栏 ============ */
   header{
-    position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;gap:10px;
-    align-items:center;justify-content:space-between;padding:12px 20px;
-    background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(12px);
-    border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,.86);backdrop-filter:saturate(180%) blur(12px);
     transition:background-color .25s, border-color .25s;
   }
-  :root[data-theme="dark"] header{background:rgba(28,28,28,.85)}
+  :root[data-theme="dark"] header{background:rgba(30,30,30,.86)}
+  .head-in{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding-top:12px;padding-bottom:12px}
   .brand{display:flex;align-items:center;gap:10px;min-width:0}
   .brand .logo{font-size:21px}
   h1{font-size:19px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -83,7 +84,8 @@
 
   /* ============ 按钮 ============ */
   .btn{
-    font:inherit;font-size:14px;padding:7px 14px;border-radius:999px;cursor:pointer;
+    font:inherit;font-size:14px;padding:7px 14px;min-height:36px;border-radius:999px;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
     border:1px solid var(--line);background:var(--surface);color:var(--text);
     transition:border-color .15s, box-shadow .15s, background-color .15s, color .25s;white-space:nowrap;
   }
@@ -91,18 +93,29 @@
   .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
   .btn.primary:hover{background:var(--brand-h);border-color:var(--brand-h)}
   .btn:disabled{opacity:.55;cursor:not-allowed}
-  #btnTheme{width:38px;height:38px;padding:0;display:grid;place-items:center;font-size:16px;line-height:1}
+  #btnTheme{width:36px;height:36px;min-height:36px;padding:0}
+  #btnTheme svg{display:block}
+  .ico-moon{display:none}
+  :root[data-theme="light"] .ico-sun{display:none}
+  :root[data-theme="light"] .ico-moon{display:block}
   .chip{
     font-size:13px;color:var(--brand);background:var(--brand-soft);border:1px solid var(--brand-line);
     padding:5px 11px;border-radius:999px;
   }
 
-  /* ============ 主区 / 卡片 ============ */
-  main{padding:24px 20px 64px;max-width:1180px;margin:0 auto}
-  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+  /* ============ 主区 ============ */
+  main{flex:1 1 auto;display:flex;flex-direction:column;justify-content:safe center;padding-top:26px;padding-bottom:40px}
+  .section-head{display:flex;align-items:baseline;gap:10px;margin:0 0 14px}
+  .section-head h2{font-size:15px;font-weight:600;margin:0}
+  .section-head .count{font-size:13px;color:var(--faint)}
+  .grid{
+    display:grid;gap:var(--gap);
+    grid-template-columns:repeat(auto-fit, minmax(240px, 300px));
+    justify-content:center;
+  }
   a.card{
     display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;
-    padding:16px;text-decoration:none;color:inherit;box-shadow:var(--shadow);
+    padding:17px;text-decoration:none;color:inherit;box-shadow:var(--shadow);
     transition:transform .15s, box-shadow .15s, border-color .15s, background-color .25s;
   }
   a.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--brand-line)}
@@ -134,6 +147,12 @@
   .iconbtn.del:hover{background:var(--brand-soft)}
   .empty{color:var(--sub);text-align:center;padding:40px 0}
 
+  /* ============ 页脚 ============ */
+  footer{border-top:1px solid var(--line);margin-top:8px}
+  .foot-in{padding-top:16px;padding-bottom:20px;color:var(--faint);font-size:12.5px;display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:space-between}
+  .foot-in a{color:var(--sub);text-decoration:none;border-bottom:1px solid var(--line)}
+  .foot-in a:hover{color:var(--brand);border-color:var(--brand-line)}
+
   /* ============ 弹窗 / 提示 ============ */
   .overlay{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:var(--overlay)}
   .dialog{
@@ -163,27 +182,47 @@
   .toast.err{background:var(--toast-err-bg);color:var(--toast-err-fg)}
 
   @media (max-width:560px){
+    :root{--pad-x:16px}
     h1{font-size:17px}
-    .btn{padding:6px 11px;font-size:13px}
+    .btn{padding:7px 12px;font-size:13px}
     #titleInput{min-width:150px;font-size:16px}
-    #btnTheme{width:34px;height:34px}
+    .grid{grid-template-columns:1fr;justify-content:stretch}
+    .section-head{margin-bottom:12px}
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="brand"><span class="logo">🧭</span><span id="brandTitle"></span></div>
-  <div class="right">
-    <div class="actions" id="headerActions"></div>
-    <button class="btn" id="btnTheme" aria-label="切换明暗主题" title="切换明暗主题">☀️</button>
+  <div class="wrap head-in">
+    <div class="brand"><span class="logo">🧭</span><span id="brandTitle"></span></div>
+    <div class="right">
+      <div class="actions" id="headerActions"></div>
+      <button class="btn" id="btnTheme" aria-label="切换明暗主题" title="切换明暗主题">
+        <svg class="ico-sun" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.7v2.1M12 19.2v2.1M2.7 12h2.1M19.2 12h2.1M5.5 5.5l1.5 1.5M17 17l1.5 1.5M18.5 5.5L17 7M7 17l-1.5 1.5"/></svg>
+        <svg class="ico-moon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 14.7A8.5 8.5 0 0 1 9.3 3.6a8.5 8.5 0 1 0 11.1 11.1Z"/></svg>
+      </button>
+    </div>
   </div>
 </header>
 
 <main>
-  <div class="grid" id="grid"></div>
-  <p class="empty" id="empty" hidden>还没有任何链接。登录后点「＋ 添加链接」开始添加。</p>
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="sectionTitle">我的链接</h2>
+      <span class="count" id="linkCount"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+    <p class="empty" id="empty" hidden>还没有任何链接。登录后点「＋ 添加链接」开始添加。</p>
+  </div>
 </main>
+
+<footer>
+  <div class="wrap foot-in">
+    <span id="footHint">未登录 · 只读浏览</span>
+    <span>由 GitHub Pages 托管</span>
+  </div>
+</footer>
 
 <div class="overlay" id="modal" hidden>
   <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
@@ -276,8 +315,9 @@ function updateThemeBtn(){
   const b = $('#btnTheme');
   if (!b) return;
   const dark = currentTheme() === 'dark';
-  b.textContent = dark ? '☀️' : '🌙';
-  b.title = dark ? '切换到亮色模式' : '切换到暗色模式';
+  const label = dark ? '切换到亮色模式' : '切换到暗色模式';
+  b.title = label;
+  b.setAttribute('aria-label', label);
 }
 function setTheme(t, persist){
   document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
@@ -451,6 +491,12 @@ function render(){
     ? navData.links.map(cardEditHTML).join('')
     : navData.links.map(cardViewHTML).join('');
   $('#empty').hidden = navData.links.length > 0;
+
+  $('#sectionTitle').textContent = editing ? '编辑链接' : '我的链接';
+  $('#linkCount').textContent = navData.links.length ? ('共 ' + navData.links.length + ' 个') : '';
+  $('#footHint').textContent = currentUser
+    ? ('已登录 ' + currentUser + (editing ? ' · 编辑中' : ' · 可编辑'))
+    : '未登录 · 只读浏览';
 }
 
 function syncFromDOM(){
