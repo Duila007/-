@@ -12,6 +12,12 @@
       "name": "我的飞书文档",
       "url": "https://vcnzf1j2lbd8.feishu.cn/docx/JiIed93OMoN8XKxPx1wcxG4nn7c",
       "desc": "飞书文档"
+    },
+    {
+      "icon": "🔗",
+      "name": "111",
+      "url": "http://106.52.9.23:3000/dashboard/overview",
+      "desc": "222"
     }
   ]
 }
