@@ -102,14 +102,11 @@
   }
 
   /* ============ 主区 ============ */
-  main{flex:1 1 auto;display:flex;flex-direction:column;justify-content:safe center;padding-top:26px;padding-bottom:40px}
-  .section-head{display:flex;align-items:baseline;gap:10px;margin:0 0 14px}
-  .section-head h2{font-size:15px;font-weight:600;margin:0}
-  .section-head .count{font-size:13px;color:var(--faint)}
-  /* 每行最多 4 个：容器宽度上限即锁死 4 列，窄屏自动减少列数 */
+  main{flex:1 1 auto;padding-top:22px;padding-bottom:40px}
+  /* 每行固定 4 个，四列等宽均匀分布；窄屏逐级降为 3/2/1 列 */
   .grid{
     display:grid;gap:var(--gap);
-    grid-template-columns:repeat(auto-fill, minmax(270px, 1fr));
+    grid-template-columns:repeat(4, minmax(0, 1fr));
   }
   a.card{
     display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;
@@ -171,13 +168,18 @@
   .toast.show{opacity:1;transform:translate(-50%,0)}
   .toast.err{background:var(--toast-err-bg);color:var(--toast-err-fg)}
 
+  @media (max-width:1100px){
+    .grid{grid-template-columns:repeat(3, minmax(0, 1fr))}
+  }
+  @media (max-width:820px){
+    .grid{grid-template-columns:repeat(2, minmax(0, 1fr))}
+  }
   @media (max-width:560px){
     :root{--pad-x:16px}
     h1{font-size:17px}
     .btn{padding:7px 12px;font-size:13px}
     #titleInput{min-width:150px;font-size:16px}
     .grid{grid-template-columns:1fr}
-    .section-head{margin-bottom:12px}
   }
 </style>
 </head>
@@ -198,10 +200,6 @@
 
 <main>
   <div class="wrap">
-    <div class="section-head">
-      <h2 id="sectionTitle">我的链接</h2>
-      <span class="count" id="linkCount"></span>
-    </div>
     <div class="grid" id="grid"></div>
     <p class="empty" id="empty" hidden>还没有任何链接。登录后点「＋ 添加链接」开始添加。</p>
   </div>
@@ -475,8 +473,6 @@ function render(){
     : navData.links.map(cardViewHTML).join('');
   $('#empty').hidden = navData.links.length > 0;
 
-  $('#sectionTitle').textContent = editing ? '编辑链接' : '我的链接';
-  $('#linkCount').textContent = navData.links.length ? ('共 ' + navData.links.length + ' 个') : '';
   $('#footHint').textContent = currentUser
     ? ('已登录 ' + currentUser + (editing ? ' · 编辑中' : ' · 可编辑'))
     : '未登录 · 只读浏览';
