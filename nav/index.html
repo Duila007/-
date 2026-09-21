@@ -153,7 +153,11 @@
   .dialog input[type=password]{
     width:100%;font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);
     border-radius:10px;background:var(--surface-2);color:var(--text);
+    text-align:left;                 /* 输入后：左对齐 */
   }
+  /* 空值时：提示文字居中显示在输入框中间 */
+  .dialog input[type=password]:placeholder-shown{text-align:center}
+  .dialog input[type=password]::placeholder{color:var(--faint);opacity:1}
   .dialog input[type=password]:focus{outline:none;border-color:var(--brand);background:var(--surface);box-shadow:0 0 0 3px var(--brand-soft)}
   .check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--sub);margin:12px 0 0}
   .actions-end{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
@@ -213,7 +217,7 @@
 <div class="overlay" id="modal" hidden>
   <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
     <h2 id="dlgTitle">登录以编辑导航</h2>
-    <input id="tokenInput" type="password" aria-label="GitHub 个人令牌" autocomplete="off" spellcheck="false">
+    <input id="tokenInput" type="password" placeholder="请输入管理员密钥" aria-label="管理员密钥" autocomplete="off" spellcheck="false">
     <label class="check"><input type="checkbox" id="rememberChk"> 记住令牌（下次打开免登录，仅本机）</label>
     <p class="err" id="loginErr" hidden></p>
     <div class="actions-end">
@@ -375,7 +379,7 @@ async function verifyToken(token){
 
 async function doLogin(token, remember){
   token = String(token || '').trim();
-  if (!token) return { ok: false, error: '请输入令牌' };
+  if (!token) return { ok: false, error: '请输入管理员密钥' };
   const r = await verifyToken(token);
   if (!r.ok) return r;
   currentUser = r.login;
