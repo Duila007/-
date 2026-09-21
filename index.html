@@ -117,7 +117,13 @@
   .card .name{font-weight:600;font-size:18px;overflow-wrap:anywhere}
   .card .desc{color:var(--sub);font-size:13px;margin-top:6px;overflow-wrap:anywhere}
   .card .lock-hint{display:flex;align-items:center;gap:5px}
-  .card.locked{cursor:pointer}
+  /* 锁定占位卡片：与普通链接卡片同款外观（边框/圆角/阴影/悬停），仅不可直接跳转 */
+  .card.locked{
+    display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:17px;color:inherit;box-shadow:var(--shadow);cursor:pointer;
+    transition:transform .15s, box-shadow .15s, border-color .15s, background-color .25s;
+  }
+  .card.locked:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--brand-line)}
   .card.edit{display:flex;flex-direction:column;gap:8px}
   .in{
     font:inherit;font-size:14px;width:100%;padding:8px 10px;border:1px solid var(--line);
