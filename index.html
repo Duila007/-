@@ -56,21 +56,21 @@
   :root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover{background:#4d4d4d}
   :root[data-theme="dark"] ::-webkit-scrollbar-track{background:transparent}
 
-  /* 环境光：左上角暖光沿对角向右下柔和衰减；固定于视口，不随内容滚动 */
+  /* 环境光：左上与右下两团暖光，均用大半径径向渐变缓慢衰减，过渡连续无边界 */
   body::before{
     content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
   }
   :root[data-theme="dark"] body::before{
     background:
-      radial-gradient(1000px 620px at 6% -6%, rgba(208,92,88,.10), transparent 62%),
-      radial-gradient(720px 400px at 98% -8%, rgba(208,92,88,.045), transparent 58%),
-      linear-gradient(135deg, rgba(208,92,88,.05) 0%, rgba(208,92,88,.02) 32%, rgba(208,92,88,0) 58%);
+      radial-gradient(1300px 850px at -2% -4%, rgba(208,92,88,.12), rgba(208,92,88,.05) 42%, rgba(208,92,88,0) 80%),
+      radial-gradient(1300px 850px at 102% 104%, rgba(208,92,88,.10), rgba(208,92,88,.04) 42%, rgba(208,92,88,0) 80%),
+      radial-gradient(800px 460px at 100% 0%, rgba(208,92,88,.035), rgba(208,92,88,0) 72%);
   }
   :root[data-theme="light"] body::before{
     background:
-      radial-gradient(1000px 620px at 6% -6%, rgba(192,72,72,.06), transparent 62%),
-      radial-gradient(720px 400px at 98% -8%, rgba(192,72,72,.03), transparent 58%),
-      linear-gradient(135deg, rgba(192,72,72,.035) 0%, rgba(192,72,72,.014) 32%, rgba(192,72,72,0) 58%);
+      radial-gradient(1300px 850px at -2% -4%, rgba(192,72,72,.07), rgba(192,72,72,.028) 42%, rgba(192,72,72,0) 80%),
+      radial-gradient(1300px 850px at 102% 104%, rgba(192,72,72,.055), rgba(192,72,72,.022) 42%, rgba(192,72,72,0) 80%),
+      radial-gradient(800px 460px at 100% 0%, rgba(192,72,72,.022), rgba(192,72,72,0) 72%);
   }
 
   /* 统一内容轴：页眉与正文同轴对齐 */
