@@ -237,8 +237,8 @@
    · 未登录：只展示链接卡片（所有人可见）
    · 登录：粘贴 GitHub 令牌（PAT，需 repo 权限），即可增删改链接
    · 保存：把数据写入本仓库根目录的 nav.json，GitHub 自动提交并发布
-   · 锁定链接：设为「需要密钥」后，未登录访客只看到占位卡片，
-     输入密钥登录后才能点击跳转（注意：数据存于公开的 nav.json，仅为展示层隐藏）
+   · 锁定链接：设为「登录后访问」后，未登录访客只看到占位卡片，
+     登录后才能点击跳转（注意：数据存于公开的 nav.json，仅为展示层隐藏）
    部署位置：仓库根目录。页面若换位置，请同步修改 CONFIG
    ============================================================ */
 
@@ -436,10 +436,10 @@ function logout(){
 /* ---------------- 渲染 ---------------- */
 function cardViewHTML(l){
   if (l.lock && !currentUser){
-    return '<div class="card locked" title="输入密钥登录后可访问">' +
+    return '<div class="card locked" title="登录后可访问">' +
         '<div class="name">' + esc(l.name || '加密链接') + '</div>' +
         (l.desc ? '<div class="desc">' + esc(l.desc) + '</div>' : '') +
-        '<div class="desc lock-hint">' + lockSvg(true) + '<span>需要密钥访问</span></div>' +
+        '<div class="desc lock-hint">' + lockSvg(true) + '<span>登录后访问</span></div>' +
       '</div>';
   }
   return '<a class="card" href="' + esc(l.url) + '" target="_blank" rel="noopener">' +
@@ -453,7 +453,7 @@ function cardEditHTML(l, i){
       '<input class="in in-url" value="' + esc(l.url) + '" placeholder="https://链接地址" spellcheck="false">' +
       '<input class="in in-desc" value="' + esc(l.desc) + '" placeholder="备注（可选）">' +
       '<div class="row end">' +
-        '<button class="iconbtn lockbtn' + (l.lock ? ' on' : '') + '" data-act="lock" title="' + (l.lock ? '需要密钥才能访问（点击改为公开）' : '所有人可见（点击设为需要密钥）') + '">' + lockSvg(!!l.lock) + '</button>' +
+        '<button class="iconbtn lockbtn' + (l.lock ? ' on' : '') + '" data-act="lock" title="' + (l.lock ? '登录后才能访问（点击改为公开）' : '所有人可见（点击设为登录后访问）') + '">' + lockSvg(!!l.lock) + '</button>' +
         '<button class="iconbtn" data-act="up" title="上移">↑</button>' +
         '<button class="iconbtn" data-act="down" title="下移">↓</button>' +
         '<button class="iconbtn del" data-act="del">删除</button>' +
