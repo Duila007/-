@@ -4,12 +4,14 @@
     {
       "name": "免费公益站统计合集",
       "url": "https://vcnzf1j2lbd8.feishu.cn/wiki/OY8fwp7C5ihpJ2kez8Mc2cKUncf",
-      "desc": "飞书文档 · 持续更新"
+      "desc": "飞书文档 · 持续更新",
+      "lock": false
     },
     {
       "name": "111",
       "url": "http://106.52.9.23:3000/dashboard/overview",
-      "desc": "222"
+      "desc": "222",
+      "lock": true
     }
   ]
 }
