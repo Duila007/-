@@ -116,6 +116,8 @@
   a.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--brand-line)}
   .card .name{font-weight:600;font-size:18px;overflow-wrap:anywhere}
   .card .desc{color:var(--sub);font-size:13px;margin-top:6px;overflow-wrap:anywhere}
+  .card .lock-hint{display:flex;align-items:center;gap:5px}
+  .card.locked{cursor:pointer}
   .card.edit{display:flex;flex-direction:column;gap:8px}
   .in{
     font:inherit;font-size:14px;width:100%;padding:8px 10px;border:1px solid var(--line);
@@ -133,6 +135,9 @@
   .iconbtn:hover{border-color:var(--line-strong)}
   .iconbtn.del{color:var(--brand);border-color:var(--brand-line);padding:0 12px}
   .iconbtn.del:hover{background:var(--brand-soft)}
+  .iconbtn.lockbtn{display:inline-flex;align-items:center;justify-content:center}
+  .iconbtn.lockbtn svg{display:block}
+  .iconbtn.lockbtn.on{color:var(--brand);border-color:var(--brand-line);background:var(--brand-soft)}
   .empty{color:var(--sub);text-align:center;padding:40px 0}
 
   /* ============ 页脚 ============ */
@@ -232,6 +237,8 @@
    · 未登录：只展示链接卡片（所有人可见）
    · 登录：粘贴 GitHub 令牌（PAT，需 repo 权限），即可增删改链接
    · 保存：把数据写入本仓库根目录的 nav.json，GitHub 自动提交并发布
+   · 锁定链接：设为「需要密钥」后，未登录访客只看到占位卡片，
+     输入密钥登录后才能点击跳转（注意：数据存于公开的 nav.json，仅为展示层隐藏）
    部署位置：仓库根目录。页面若换位置，请同步修改 CONFIG
    ============================================================ */
 
@@ -255,7 +262,7 @@ const CACHE_KEY = 'nav_cache_v1';
 const TOKEN_KEY = 'nav_token_v1';
 const THEME_KEY = 'nav_theme_v1';
 
-let navData = null;       // { title, links:[{name,url,desc}] }
+let navData = null;       // { title, links:[{name,url,desc,lock}] }
 let editing = false;      // 是否处于编辑模式
 let saving = false;
 let currentUser = null;   // 已登录的 GitHub 账号
@@ -291,6 +298,12 @@ function normalizeUrl(u){
 function hostOf(u){
   try { return new URL(u).hostname; } catch (e) { return ''; }
 }
+/* 锁定图标（与顶栏主题按钮同风格的描边 SVG） */
+function lockSvg(locked){
+  return locked
+    ? '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>'
+    : '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 7.9-.9"/></svg>';
+}
 
 /* ---------------- 主题（默认暗色，仅本次会话记住切换） ---------------- */
 function currentTheme(){
@@ -318,7 +331,8 @@ function normalizeData(d){
     .map(x => ({
       name: String((x && x.name) || ''),
       url: normalizeUrl(x && x.url),
-      desc: String((x && x.desc) || '')
+      desc: String((x && x.desc) || ''),
+      lock: !!(x && x.lock)
     }));
   return { title: String(d.title || '导航'), links };
 }
@@ -421,6 +435,13 @@ function logout(){
 
 /* ---------------- 渲染 ---------------- */
 function cardViewHTML(l){
+  if (l.lock && !currentUser){
+    return '<div class="card locked" title="输入密钥登录后可访问">' +
+        '<div class="name">' + esc(l.name || '加密链接') + '</div>' +
+        (l.desc ? '<div class="desc">' + esc(l.desc) + '</div>' : '') +
+        '<div class="desc lock-hint">' + lockSvg(true) + '<span>需要密钥访问</span></div>' +
+      '</div>';
+  }
   return '<a class="card" href="' + esc(l.url) + '" target="_blank" rel="noopener">' +
       '<div class="name">' + esc(l.name || l.url) + '</div>' +
       (l.desc ? '<div class="desc">' + esc(l.desc) + '</div>' : '') +
@@ -432,6 +453,7 @@ function cardEditHTML(l, i){
       '<input class="in in-url" value="' + esc(l.url) + '" placeholder="https://链接地址" spellcheck="false">' +
       '<input class="in in-desc" value="' + esc(l.desc) + '" placeholder="备注（可选）">' +
       '<div class="row end">' +
+        '<button class="iconbtn lockbtn' + (l.lock ? ' on' : '') + '" data-act="lock" title="' + (l.lock ? '需要密钥才能访问（点击改为公开）' : '所有人可见（点击设为需要密钥）') + '">' + lockSvg(!!l.lock) + '</button>' +
         '<button class="iconbtn" data-act="up" title="上移">↑</button>' +
         '<button class="iconbtn" data-act="down" title="下移">↓</button>' +
         '<button class="iconbtn del" data-act="del">删除</button>' +
@@ -481,10 +503,12 @@ function syncFromDOM(){
   if (t) navData.title = t.value.trim() || '导航';
   const links = [];
   document.querySelectorAll('#grid .card.edit').forEach(c => {
+    const old = navData.links[Number(c.dataset.idx)] || {};
     links.push({
       name: $('.in-name', c).value.trim(),
       url: $('.in-url', c).value.trim(),
-      desc: $('.in-desc', c).value.trim()
+      desc: $('.in-desc', c).value.trim(),
+      lock: !!old.lock
     });
   });
   navData.links = links;
@@ -512,6 +536,11 @@ function removeAt(idx){
   navData.links.splice(idx, 1);
   render();
 }
+function toggleLock(idx){
+  syncFromDOM();
+  navData.links[idx].lock = !navData.links[idx].lock;
+  render();
+}
 
 /* ---------------- 保存到 GitHub ---------------- */
 async function save(){
@@ -526,7 +555,7 @@ async function save(){
       return;
     }
     const url = normalizeUrl(l.url);
-    clean.links.push({ name: l.name || hostOf(url) || url, url: url, desc: l.desc });
+    clean.links.push({ name: l.name || hostOf(url) || url, url: url, desc: l.desc, lock: !!l.lock });
   }
 
   saving = true; render();
@@ -600,6 +629,7 @@ document.addEventListener('click', async (e) => {
 });
 
 $('#grid').addEventListener('click', (e) => {
+  if (!currentUser && e.target.closest('.card.locked')){ openLogin(); return; }
   const btn = e.target.closest('button[data-act]');
   if (!btn || !editing) return;
   const card = btn.closest('.card');
@@ -608,6 +638,7 @@ $('#grid').addEventListener('click', (e) => {
   if (btn.dataset.act === 'up') move(idx, -1);
   else if (btn.dataset.act === 'down') move(idx, 1);
   else if (btn.dataset.act === 'del') removeAt(idx);
+  else if (btn.dataset.act === 'lock') toggleLock(idx);
 });
 
 $('#modal').addEventListener('click', (e) => { if (e.target === $('#modal')) closeLogin(); });
