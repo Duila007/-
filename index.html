@@ -49,15 +49,29 @@
     transition:background-color .25s, color .25s;
   }
   :root[data-theme="dark"] body{
-    background:
-      radial-gradient(1100px 560px at 14% -12%, rgba(208,92,88,.05), transparent 62%),
-      radial-gradient(900px 480px at 100% 0, rgba(208,92,88,.032), transparent 58%),
-      var(--bg);
+    background: var(--bg);
   }
   :root[data-theme="dark"] ::-webkit-scrollbar{width:10px;height:10px}
   :root[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#3f3f3f;border-radius:8px}
   :root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover{background:#4d4d4d}
   :root[data-theme="dark"] ::-webkit-scrollbar-track{background:transparent}
+
+  /* 环境光：左上角暖光沿对角向右下柔和衰减；固定于视口，不随内容滚动 */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  }
+  :root[data-theme="dark"] body::before{
+    background:
+      radial-gradient(1000px 620px at 6% -6%, rgba(208,92,88,.10), transparent 62%),
+      radial-gradient(720px 400px at 98% -8%, rgba(208,92,88,.045), transparent 58%),
+      linear-gradient(135deg, rgba(208,92,88,.05) 0%, rgba(208,92,88,.02) 32%, rgba(208,92,88,0) 58%);
+  }
+  :root[data-theme="light"] body::before{
+    background:
+      radial-gradient(1000px 620px at 6% -6%, rgba(192,72,72,.06), transparent 62%),
+      radial-gradient(720px 400px at 98% -8%, rgba(192,72,72,.03), transparent 58%),
+      linear-gradient(135deg, rgba(192,72,72,.035) 0%, rgba(192,72,72,.014) 32%, rgba(192,72,72,0) 58%);
+  }
 
   /* 统一内容轴：页眉与正文同轴对齐 */
   .wrap{width:100%;max-width:1280px;margin:0 auto;padding:0 var(--pad-x)}
