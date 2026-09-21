@@ -114,9 +114,8 @@
     transition:transform .15s, box-shadow .15s, border-color .15s, background-color .25s;
   }
   a.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--brand-line)}
-  .card .name{font-weight:600;font-size:16px;overflow-wrap:anywhere}
+  .card .name{font-weight:600;font-size:18px;overflow-wrap:anywhere}
   .card .desc{color:var(--sub);font-size:13px;margin-top:6px;overflow-wrap:anywhere}
-  .card .host{color:var(--faint);font-size:12px;margin-top:9px;overflow-wrap:anywhere}
   .card.edit{display:flex;flex-direction:column;gap:8px}
   .in{
     font:inherit;font-size:14px;width:100%;padding:8px 10px;border:1px solid var(--line);
@@ -232,15 +231,15 @@
    导航 · 单文件页面（默认暗色）
    · 未登录：只展示链接卡片（所有人可见）
    · 登录：粘贴 GitHub 令牌（PAT，需 repo 权限），即可增删改链接
-   · 保存：把数据写入本仓库的 nav/nav.json，GitHub 自动提交并发布
-   部署位置：仓库根目录下的 nav/ 文件夹。页面若换位置，请同步修改 CONFIG
+   · 保存：把数据写入本仓库根目录的 nav.json，GitHub 自动提交并发布
+   部署位置：仓库根目录。页面若换位置，请同步修改 CONFIG
    ============================================================ */
 
 const CONFIG = {
   owner: 'Duila007',
   repo: '-',
   branch: 'main',
-  dataPath: 'nav/nav.json'          // nav.json 在仓库中的路径
+  dataPath: 'nav.json'              // nav.json 在仓库中的路径
 };
 
 /* 默认数据（第一次打开、或 nav.json 还没生成时显示的内容） */
@@ -422,11 +421,9 @@ function logout(){
 
 /* ---------------- 渲染 ---------------- */
 function cardViewHTML(l){
-  const host = hostOf(l.url);
   return '<a class="card" href="' + esc(l.url) + '" target="_blank" rel="noopener">' +
       '<div class="name">' + esc(l.name || l.url) + '</div>' +
       (l.desc ? '<div class="desc">' + esc(l.desc) + '</div>' : '') +
-      (host ? '<div class="host">' + esc(host) + '</div>' : '') +
     '</a>';
 }
 function cardEditHTML(l, i){
