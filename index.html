@@ -56,22 +56,36 @@
   :root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover{background:#4d4d4d}
   :root[data-theme="dark"] ::-webkit-scrollbar-track{background:transparent}
 
-  /* 环境光：左上与右下两团暖光，均用大半径径向渐变缓慢衰减，过渡连续无边界 */
+  /* 环境光：左上与右下两团暖光，大半径径向渐变 + 多段缓落，避免台阶 */
   body::before{
     content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
   }
   :root[data-theme="dark"] body::before{
     background:
-      radial-gradient(1300px 850px at -2% -4%, rgba(208,92,88,.12), rgba(208,92,88,.05) 42%, rgba(208,92,88,0) 80%),
-      radial-gradient(1300px 850px at 102% 104%, rgba(208,92,88,.10), rgba(208,92,88,.04) 42%, rgba(208,92,88,0) 80%),
-      radial-gradient(800px 460px at 100% 0%, rgba(208,92,88,.035), rgba(208,92,88,0) 72%);
+      radial-gradient(1350px 900px at -3% -5%,
+        rgba(208,92,88,.11), rgba(208,92,88,.055) 35%, rgba(208,92,88,.016) 62%, rgba(208,92,88,0) 86%),
+      radial-gradient(1350px 900px at 103% 105%,
+        rgba(208,92,88,.09), rgba(208,92,88,.045) 35%, rgba(208,92,88,.013) 62%, rgba(208,92,88,0) 86%),
+      radial-gradient(800px 460px at 100% 0%,
+        rgba(208,92,88,.03), rgba(208,92,88,0) 75%);
   }
   :root[data-theme="light"] body::before{
     background:
-      radial-gradient(1300px 850px at -2% -4%, rgba(192,72,72,.07), rgba(192,72,72,.028) 42%, rgba(192,72,72,0) 80%),
-      radial-gradient(1300px 850px at 102% 104%, rgba(192,72,72,.055), rgba(192,72,72,.022) 42%, rgba(192,72,72,0) 80%),
-      radial-gradient(800px 460px at 100% 0%, rgba(192,72,72,.022), rgba(192,72,72,0) 72%);
+      radial-gradient(1350px 900px at -3% -5%,
+        rgba(192,72,72,.07), rgba(192,72,72,.032) 35%, rgba(192,72,72,.01) 62%, rgba(192,72,72,0) 86%),
+      radial-gradient(1350px 900px at 103% 105%,
+        rgba(192,72,72,.055), rgba(192,72,72,.026) 35%, rgba(192,72,72,.008) 62%, rgba(192,72,72,0) 86%),
+      radial-gradient(800px 460px at 100% 0%,
+        rgba(192,72,72,.02), rgba(192,72,72,0) 75%);
   }
+
+  /* 细噪点（抖动）：打碎暗部渐变的量化色带，并带来细腻的胶片颗粒质感 */
+  body::after{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:.022;
+  }
+  :root[data-theme="light"] body::after{ opacity:.015 }
 
   /* 统一内容轴：页眉与正文同轴对齐 */
   .wrap{width:100%;max-width:1280px;margin:0 auto;padding:0 var(--pad-x)}
