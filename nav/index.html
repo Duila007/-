@@ -60,7 +60,7 @@
   :root[data-theme="dark"] ::-webkit-scrollbar-track{background:transparent}
 
   /* 统一内容轴：页眉与正文同轴对齐 */
-  .wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 var(--pad-x)}
+  .wrap{width:100%;max-width:1280px;margin:0 auto;padding:0 var(--pad-x)}
 
   /* ============ 顶栏 ============ */
   header{
@@ -106,10 +106,10 @@
   .section-head{display:flex;align-items:baseline;gap:10px;margin:0 0 14px}
   .section-head h2{font-size:15px;font-weight:600;margin:0}
   .section-head .count{font-size:13px;color:var(--faint)}
+  /* 每行最多 4 个：容器宽度上限即锁死 4 列，窄屏自动减少列数 */
   .grid{
     display:grid;gap:var(--gap);
-    grid-template-columns:repeat(auto-fit, minmax(240px, 300px));
-    justify-content:center;
+    grid-template-columns:repeat(auto-fill, minmax(270px, 1fr));
   }
   a.card{
     display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;
@@ -172,7 +172,7 @@
     h1{font-size:17px}
     .btn{padding:7px 12px;font-size:13px}
     #titleInput{min-width:150px;font-size:16px}
-    .grid{grid-template-columns:1fr;justify-content:stretch}
+    .grid{grid-template-columns:1fr}
     .section-head{margin-bottom:12px}
   }
 </style>
