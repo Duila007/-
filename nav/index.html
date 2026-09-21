@@ -3,41 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>我的导航</title>
+<title>导航</title>
 <script>
-  /* 尽早应用主题，避免刷新时闪白 */
+  /* 尽早应用主题，避免刷新时闪白。默认暗色；仅本次会话内记住切换 */
   (function () {
     try {
-      var t = localStorage.getItem('nav_theme_v1');
+      var t = sessionStorage.getItem('nav_theme_v1');
       document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
     } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
   })();
 </script>
 <style>
-  /* ============ 主题变量 ============ */
+  /* ============ 主题变量（默认暗色） ============ */
   :root{
-    --bg:#f6f6f7; --surface:#ffffff; --surface-2:#f2f2f4; --line:#e4e4e7; --line-strong:#cfcfd6;
-    --text:#1b1b1d; --sub:#66666e; --faint:#6e6e76;
-    --brand:#c04848; --brand-h:#a83c3c; --brand-soft:rgba(192,72,72,.10); --brand-line:rgba(192,72,72,.30);
-    --icon-bg:rgba(192,72,72,.10);
-    --shadow:0 1px 2px rgba(24,24,28,.05), 0 6px 18px rgba(24,24,28,.07);
-    --shadow-hover:0 10px 28px rgba(24,24,28,.14);
-    --overlay:rgba(20,20,24,.45);
-    --toast-bg:#232326; --toast-fg:#f2f2f4;
-    --toast-err-bg:#8f2020; --toast-err-fg:#ffeded;
-    --pad-x:20px; --gap:14px;
-  }
-  :root[data-theme="dark"]{
     color-scheme: dark;
     --bg:#1e1e1e; --surface:#2a2a2a; --surface-2:#252525; --line:#353535; --line-strong:#4a4a4a;
     --text:#e8e8e8; --sub:#b4b4b4; --faint:#a6a6a6;
     --brand:#c04848; --brand-h:#d05c58; --brand-soft:rgba(208,92,88,.14); --brand-line:rgba(208,92,88,.34);
-    --icon-bg:rgba(208,92,88,.13);
     --shadow:0 1px 2px rgba(0,0,0,.38), 0 6px 18px rgba(0,0,0,.26);
     --shadow-hover:0 12px 30px rgba(0,0,0,.45);
     --overlay:rgba(0,0,0,.62);
     --toast-bg:#3a3a3a; --toast-fg:#f2f2f2;
     --toast-err-bg:#7f2222; --toast-err-fg:#ffe9e9;
+    --pad-x:20px; --gap:14px;
+  }
+  :root[data-theme="light"]{
+    color-scheme: light;
+    --bg:#f6f6f7; --surface:#ffffff; --surface-2:#f2f2f4; --line:#e4e4e7; --line-strong:#cfcfd6;
+    --text:#1b1b1d; --sub:#66666e; --faint:#6e6e76;
+    --brand:#c04848; --brand-h:#a83c3c; --brand-soft:rgba(192,72,72,.10); --brand-line:rgba(192,72,72,.30);
+    --shadow:0 1px 2px rgba(24,24,28,.05), 0 6px 18px rgba(24,24,28,.07);
+    --shadow-hover:0 10px 28px rgba(24,24,28,.14);
+    --overlay:rgba(20,20,24,.45);
+    --toast-bg:#232326; --toast-fg:#f2f2f4;
+    --toast-err-bg:#8f2020; --toast-err-fg:#ffeded;
   }
 
   /* ============ 基础 ============ */
@@ -66,13 +65,12 @@
   /* ============ 顶栏 ============ */
   header{
     position:sticky;top:0;z-index:30;border-bottom:1px solid var(--line);
-    background:rgba(255,255,255,.86);backdrop-filter:saturate(180%) blur(12px);
+    background:rgba(30,30,30,.86);backdrop-filter:saturate(180%) blur(12px);
     transition:background-color .25s, border-color .25s;
   }
-  :root[data-theme="dark"] header{background:rgba(30,30,30,.86)}
+  :root[data-theme="light"] header{background:rgba(255,255,255,.86)}
   .head-in{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding-top:12px;padding-bottom:12px}
   .brand{display:flex;align-items:center;gap:10px;min-width:0}
-  .brand .logo{font-size:21px}
   h1{font-size:19px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   #titleInput{
     font:700 19px/1.4 inherit;border:1px solid var(--line);border-radius:9px;padding:4px 9px;
@@ -119,11 +117,6 @@
     transition:transform .15s, box-shadow .15s, border-color .15s, background-color .25s;
   }
   a.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--brand-line)}
-  .card .top{display:flex;align-items:center;gap:10px}
-  .card .ico{
-    font-size:20px;width:34px;height:34px;flex:none;display:grid;place-items:center;
-    background:var(--icon-bg);border-radius:10px;
-  }
   .card .name{font-weight:600;font-size:16px;overflow-wrap:anywhere}
   .card .desc{color:var(--sub);font-size:13px;margin-top:6px;overflow-wrap:anywhere}
   .card .host{color:var(--faint);font-size:12px;margin-top:9px;overflow-wrap:anywhere}
@@ -136,7 +129,6 @@
   .in::placeholder{color:var(--faint)}
   .card.edit .row{display:flex;gap:8px}
   .card.edit .row.end{justify-content:flex-end}
-  .in-ico{width:56px;flex:none;text-align:center}
   .iconbtn{
     font:inherit;font-size:14px;height:32px;min-width:34px;padding:0 8px;border-radius:9px;
     border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;
@@ -150,8 +142,6 @@
   /* ============ 页脚 ============ */
   footer{border-top:1px solid var(--line);margin-top:8px}
   .foot-in{padding-top:16px;padding-bottom:20px;color:var(--faint);font-size:12.5px;display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:space-between}
-  .foot-in a{color:var(--sub);text-decoration:none;border-bottom:1px solid var(--line)}
-  .foot-in a:hover{color:var(--brand);border-color:var(--brand-line)}
 
   /* ============ 弹窗 / 提示 ============ */
   .overlay{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:var(--overlay)}
@@ -159,11 +149,7 @@
     width:100%;max-width:540px;background:var(--surface);border:1px solid var(--line);
     border-radius:16px;padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.45);
   }
-  .dialog h2{margin:0 0 8px;font-size:18px}
-  .hint{color:var(--sub);font-size:13px;margin:0 0 12px}
-  .hint.small{font-size:12px;margin:12px 0 0}
-  .hint a{color:var(--brand)}
-  .hint code{background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:12px}
+  .dialog h2{margin:0 0 14px;font-size:18px}
   .dialog input[type=password]{
     width:100%;font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);
     border-radius:10px;background:var(--surface-2);color:var(--text);
@@ -195,7 +181,7 @@
 
 <header>
   <div class="wrap head-in">
-    <div class="brand"><span class="logo">🧭</span><span id="brandTitle"></span></div>
+    <div class="brand"><span id="brandTitle"></span></div>
     <div class="right">
       <div class="actions" id="headerActions"></div>
       <button class="btn" id="btnTheme" aria-label="切换明暗主题" title="切换明暗主题">
@@ -227,10 +213,8 @@
 <div class="overlay" id="modal" hidden>
   <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
     <h2 id="dlgTitle">登录以编辑导航</h2>
-    <p class="hint">粘贴你的 GitHub 个人令牌（PAT）。只有对该仓库有写入权限的账号才能登录成功；令牌只保存在本机浏览器，不会发给任何第三方。</p>
-    <input id="tokenInput" type="password" placeholder="ghp_… 或 github_pat_…" autocomplete="off" spellcheck="false">
+    <input id="tokenInput" type="password" aria-label="GitHub 个人令牌" autocomplete="off" spellcheck="false">
     <label class="check"><input type="checkbox" id="rememberChk"> 记住令牌（下次打开免登录，仅本机）</label>
-    <p class="hint small">还没有令牌？到 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub → Settings → Developer settings → Personal access tokens</a> 新建一个，勾选 <code>repo</code> 权限。</p>
     <p class="err" id="loginErr" hidden></p>
     <div class="actions-end">
       <button class="btn" id="cancelLogin">取消</button>
@@ -243,8 +227,8 @@
 
 <script>
 /* ============================================================
-   我的导航 · 单文件导航页（暗色 / 亮色双主题）
-   · 未登录：只展示导航卡片（所有人可见）
+   导航 · 单文件页面（默认暗色）
+   · 未登录：只展示链接卡片（所有人可见）
    · 登录：粘贴 GitHub 令牌（PAT，需 repo 权限），即可增删改链接
    · 保存：把数据写入本仓库的 nav/nav.json，GitHub 自动提交并发布
    部署位置：仓库根目录下的 nav/ 文件夹。页面若换位置，请同步修改 CONFIG
@@ -257,12 +241,12 @@ const CONFIG = {
   dataPath: 'nav/nav.json'          // nav.json 在仓库中的路径
 };
 
-/* 默认导航（第一次打开、或 nav.json 还没生成时显示的内容） */
+/* 默认数据（第一次打开、或 nav.json 还没生成时显示的内容） */
 const DEFAULT_NAV = {
-  title: '我的导航',
+  title: '导航',
   links: [
-    { icon: '📄', name: '免费公益站统计合集', url: 'https://vcnzf1j2lbd8.feishu.cn/wiki/OY8fwp7C5ihpJ2kez8Mc2cKUncf', desc: '飞书文档 · 持续更新' },
-    { icon: '📝', name: '我的飞书文档', url: 'https://vcnzf1j2lbd8.feishu.cn/docx/JiIed93OMoN8XKxPx1wcxG4nn7c', desc: '飞书文档' }
+    { name: '免费公益站统计合集', url: 'https://vcnzf1j2lbd8.feishu.cn/wiki/OY8fwp7C5ihpJ2kez8Mc2cKUncf', desc: '飞书文档 · 持续更新' },
+    { name: '我的飞书文档', url: 'https://vcnzf1j2lbd8.feishu.cn/docx/JiIed93OMoN8XKxPx1wcxG4nn7c', desc: '飞书文档' }
   ]
 };
 
@@ -270,7 +254,7 @@ const CACHE_KEY = 'nav_cache_v1';
 const TOKEN_KEY = 'nav_token_v1';
 const THEME_KEY = 'nav_theme_v1';
 
-let navData = null;       // { title, links:[{icon,name,url,desc}] }
+let navData = null;       // { title, links:[{name,url,desc}] }
 let editing = false;      // 是否处于编辑模式
 let saving = false;
 let currentUser = null;   // 已登录的 GitHub 账号
@@ -307,7 +291,7 @@ function hostOf(u){
   try { return new URL(u).hostname; } catch (e) { return ''; }
 }
 
-/* ---------------- 主题 ---------------- */
+/* ---------------- 主题（默认暗色，仅本次会话记住切换） ---------------- */
 function currentTheme(){
   return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
 }
@@ -321,7 +305,7 @@ function updateThemeBtn(){
 }
 function setTheme(t, persist){
   document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
-  if (persist !== false){ try { localStorage.setItem(THEME_KEY, t); } catch (e) {} }
+  if (persist !== false){ try { sessionStorage.setItem(THEME_KEY, t); } catch (e) {} }
   updateThemeBtn();
 }
 
@@ -331,12 +315,11 @@ function normalizeData(d){
   const links = d.links
     .filter(x => x && (x.url || x.name))
     .map(x => ({
-      icon: String((x && x.icon) || ''),
       name: String((x && x.name) || ''),
       url: normalizeUrl(x && x.url),
       desc: String((x && x.desc) || '')
     }));
-  return { title: String(d.title || '我的导航'), links };
+  return { title: String(d.title || '导航'), links };
 }
 function cacheGet(){
   try { const raw = localStorage.getItem(CACHE_KEY); return raw ? JSON.parse(raw) : null; }
@@ -380,7 +363,7 @@ async function verifyToken(token){
   const perm = await gh('/repos/' + CONFIG.owner + '/' + CONFIG.repo);
   if (!perm.ok){
     currentToken = null;
-    return { ok: false, error: '无法读取仓库 ' + CONFIG.owner + '/' + CONFIG.repo + '（HTTP ' + perm.status + '），请确认令牌有 repo 权限' };
+    return { ok: false, error: '无法读取仓库 ' + CONFIG.owner + '/' + CONFIG.repo + '（HTTP ' + perm.status + '）' };
   }
   const canPush = !!(perm.data && perm.data.permissions && perm.data.permissions.push);
   if (!canPush){
@@ -399,7 +382,7 @@ async function doLogin(token, remember){
   setStoredToken(token, remember);
   editing = true;
   render();
-  toast('已登录：' + currentUser + '，现在可以编辑导航');
+  toast('已登录：' + currentUser + '，现在可以编辑');
   return r;
 }
 
@@ -421,7 +404,7 @@ async function restoreSession(){
   const r = await verifyToken(tk);
   if (r.ok){
     currentUser = r.login;
-    render();   // 保持"看"的状态，头部会出现「编辑」按钮
+    render();
   } else {
     clearStoredToken();
     currentToken = null;
@@ -439,18 +422,14 @@ function logout(){
 function cardViewHTML(l){
   const host = hostOf(l.url);
   return '<a class="card" href="' + esc(l.url) + '" target="_blank" rel="noopener">' +
-      '<div class="top"><span class="ico">' + esc(l.icon || '🔗') + '</span>' +
-      '<span class="name">' + esc(l.name || l.url) + '</span></div>' +
+      '<div class="name">' + esc(l.name || l.url) + '</div>' +
       (l.desc ? '<div class="desc">' + esc(l.desc) + '</div>' : '') +
       (host ? '<div class="host">' + esc(host) + '</div>' : '') +
     '</a>';
 }
 function cardEditHTML(l, i){
   return '<div class="card edit" data-idx="' + i + '">' +
-      '<div class="row">' +
-        '<input class="in in-ico" value="' + esc(l.icon) + '" placeholder="图标" maxlength="4">' +
-        '<input class="in in-name" value="' + esc(l.name) + '" placeholder="名称">' +
-      '</div>' +
+      '<input class="in in-name" value="' + esc(l.name) + '" placeholder="名称">' +
       '<input class="in in-url" value="' + esc(l.url) + '" placeholder="https://链接地址" spellcheck="false">' +
       '<input class="in in-desc" value="' + esc(l.desc) + '" placeholder="备注（可选）">' +
       '<div class="row end">' +
@@ -461,7 +440,7 @@ function cardEditHTML(l, i){
     '</div>';
 }
 function render(){
-  document.title = navData.title || '我的导航';
+  document.title = navData.title || '导航';
 
   const act = $('#headerActions');
   if (!currentUser){
@@ -481,7 +460,7 @@ function render(){
 
   const brand = $('#brandTitle');
   if (editing){
-    brand.innerHTML = '<input id="titleInput" value="' + esc(navData.title) + '" placeholder="导航标题">';
+    brand.innerHTML = '<input id="titleInput" value="' + esc(navData.title) + '" placeholder="标题">';
   } else {
     brand.innerHTML = '<h1>' + esc(navData.title) + '</h1>';
   }
@@ -502,11 +481,10 @@ function render(){
 function syncFromDOM(){
   if (!editing) return;
   const t = $('#titleInput');
-  if (t) navData.title = t.value.trim() || '我的导航';
+  if (t) navData.title = t.value.trim() || '导航';
   const links = [];
   document.querySelectorAll('#grid .card.edit').forEach(c => {
     links.push({
-      icon: $('.in-ico', c).value.trim(),
       name: $('.in-name', c).value.trim(),
       url: $('.in-url', c).value.trim(),
       desc: $('.in-desc', c).value.trim()
@@ -518,7 +496,7 @@ function focusLast(){
   const cards = document.querySelectorAll('#grid .card.edit');
   const last = cards[cards.length - 1];
   if (last){
-    syncFromDOM();   // 先把已填内容读回内存，避免刚输入的丢失
+    syncFromDOM();
     const inp = $('.in-name', last);
     if (inp) inp.focus();
   }
@@ -543,15 +521,15 @@ async function save(){
   if (!currentToken) { toast('请先登录', 'err'); return; }
   syncFromDOM();
 
-  const clean = { title: navData.title || '我的导航', links: [] };
+  const clean = { title: navData.title || '导航', links: [] };
   for (const l of navData.links){
-    if (!l.name && !l.url) continue;                 // 全空行忽略
-    if (!l.url) {                                     // 有名字没网址 → 报错中止
+    if (!l.name && !l.url) continue;
+    if (!l.url) {
       toast('「' + l.name + '」还缺少网址', 'err', 5000);
       return;
     }
     const url = normalizeUrl(l.url);
-    clean.links.push({ icon: l.icon, name: l.name || hostOf(url) || url, url: url, desc: l.desc });
+    clean.links.push({ name: l.name || hostOf(url) || url, url: url, desc: l.desc });
   }
 
   saving = true; render();
@@ -578,7 +556,7 @@ async function save(){
 
     navData = clean;
     cacheSet(navData);
-    toast('已保存到 GitHub，约 1 分钟后所有访客都能看到');
+    toast('已保存，约 1 分钟后所有访客都能看到');
   } catch (err){
     toast('保存失败：' + err.message, 'err', 6000);
   } finally {
@@ -616,7 +594,7 @@ document.addEventListener('click', async (e) => {
   if (btn.id === 'btnTheme')  { setTheme(currentTheme() === 'dark' ? 'light' : 'dark'); return; }
   if (btn.id === 'btnLogin')  { openLogin(); return; }
   if (btn.id === 'btnEdit')   { editing = true; render(); return; }
-  if (btn.id === 'btnAdd')    { syncFromDOM(); navData.links.push({ icon: '🔗', name: '', url: '', desc: '' }); render(); focusLast(); return; }
+  if (btn.id === 'btnAdd')    { syncFromDOM(); navData.links.push({ name: '', url: '', desc: '' }); render(); focusLast(); return; }
   if (btn.id === 'btnSave')   { save(); return; }
   if (btn.id === 'btnDone')   { syncFromDOM(); editing = false; render(); return; }
   if (btn.id === 'btnLogout') { logout(); return; }
@@ -646,10 +624,10 @@ async function init(){
   updateThemeBtn();
   const published = await loadPublished();
   navData = normalizeData(published) || normalizeData(cacheGet()) || normalizeData(DEFAULT_NAV)
-         || { title: '我的导航', links: [] };
+         || { title: '导航', links: [] };
   cacheSet(navData);
   render();
-  await restoreSession();   // 有记住的令牌就静默恢复登录态
+  await restoreSession();
 }
 init();
 </script>
