@@ -2,12 +2,6 @@
   "title": "导航--防丢失",
   "links": [
     {
-      "name": "林nnnn",
-      "url": "http://106.52.9.23:3000/dashboard/overview",
-      "desc": "",
-      "lock": true
-    },
-    {
       "name": "防丢失联系",
       "url": "https://qm.qq.com/q/dM6AZSMHzW",
       "desc": "加群链接",
